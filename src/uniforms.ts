@@ -67,9 +67,9 @@ export class GlobalUniforms {
 
     update(time: number, width: number, height: number): void {
         this.values[0] = time;
-        this.values[1] = width;
-        this.values[2] = height;
-        // values[3] is padding
+        this.values[1] = 0; // Padding
+        this.values[2] = width;
+        this.values[3] = height;
         
         this.ctx.device.queue.writeBuffer(
             this.buffer,
