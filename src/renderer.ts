@@ -8,11 +8,17 @@ export class Renderer {
 
     constructor(
         private readonly ctx: WebGPUContext,
-        private pipeline: GPURenderPipeline | null = null
+        private pipeline: GPURenderPipeline | null = null,
+        private bindGroups: GPUBindGroup[] = [],
+        private onFrame?: (time: number) => void
     ) {}
 
+    setOnFrame(callback: (time: number) => void): void {
+        this.onFrame = callback;
+    }
+
     start(): void {
-        this.render();
+        this.animationFrameId = requestAnimationFrame(this.render);
     }
 
     stop(): void {
@@ -26,7 +32,15 @@ export class Renderer {
         this.pipeline = pipeline;
     }
 
-    private render = (): void => {
+    setBindGroups(bindGroups: GPUBindGroup[]): void {
+        this.bindGroups = bindGroups;
+    }
+
+    private render = (time: number): void => {
+        if (this.onFrame) {
+            this.onFrame(time);
+        }
+
         if (!this.pipeline) {
             this.animationFrameId = requestAnimationFrame(this.render);
             return;
@@ -47,6 +61,11 @@ export class Renderer {
         });
 
         passEncoder.setPipeline(this.pipeline);
+        
+        for (let i = 0; i < this.bindGroups.length; i++) {
+            passEncoder.setBindGroup(i, this.bindGroups[i]);
+        }
+
         passEncoder.draw(3); // Fullscreen triangle
         passEncoder.end();
 

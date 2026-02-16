@@ -4,8 +4,16 @@ import { Renderer } from "./renderer";
 import { PipelineManager } from "./pipeline";
 import { Editor } from "./editor";
 import { UI } from "./ui";
+import { GlobalUniforms } from "./uniforms";
 
 const INITIAL_SHADER = `
+struct Globals {
+    time: f32,
+    resolution: vec2<f32>,
+};
+
+@group(0) @binding(0) var<uniform> globals: Globals;
+
 struct VertexOutput {
   @builtin(position) position : vec4<f32>,
   @location(0) uv : vec2<f32>,
@@ -27,7 +35,11 @@ fn vs_main(@builtin(vertex_index) vertexIndex : u32) -> VertexOutput {
 
 @fragment
 fn fs_main(@location(0) uv : vec2<f32>) -> @location(0) vec4<f32> {
-  return vec4<f32>(uv, 0.5, 1.0);
+  // Use time to animate color
+  let r = 0.5 + 0.5 * sin(globals.time);
+  let g = uv.x;
+  let b = uv.y;
+  return vec4<f32>(r, g, b, 1.0);
 }
 `;
 
@@ -44,16 +56,20 @@ async function main() {
 
   try {
     const ctx = await WebGPUContext.init(canvas);
+    const globalUniforms = new GlobalUniforms(ctx);
     const renderer = new Renderer(ctx);
     const pipelineManager = new PipelineManager(ctx);
     
+    // Bind globals to renderer
+    renderer.setBindGroups([globalUniforms.bindGroup]);
+
     // Initialize Editor
     const editor = new Editor(editorContainer, INITIAL_SHADER);
 
     // Initial compilation
     const compile = async (code: string) => {
       try {
-        const pipeline = await pipelineManager.createPipeline(code);
+        const pipeline = await pipelineManager.createPipeline(code, [globalUniforms.bindGroupLayout]);
         renderer.setPipeline(pipeline);
         ui.clearError();
       } catch (err: unknown) {
@@ -68,7 +84,6 @@ async function main() {
     await compile(INITIAL_SHADER);
 
     // Handle updates
-    // Simple debounce
     let timeoutId: number | undefined; 
     editor.onChange((code) => {
       if (timeoutId !== undefined) {
@@ -80,6 +95,12 @@ async function main() {
     });
 
     // Start render loop
+    renderer.setOnFrame((time) => {
+       const width = canvas.width;
+       const height = canvas.height;
+       // time is in ms, convert to seconds
+       globalUniforms.update(time * 0.001, width, height);
+    });
     renderer.start();
 
   } catch (err: unknown) {
