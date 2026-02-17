@@ -13,26 +13,26 @@ export class Renderer {
         private onFrame?: (time: number) => void
     ) {}
 
-    setOnFrame(callback: (time: number) => void): void {
+    public setOnFrame(callback: (time: number) => void): void {
         this.onFrame = callback;
     }
 
-    start(): void {
+    public start(): void {
         this.animationFrameId = requestAnimationFrame(this.render);
     }
 
-    stop(): void {
+    public stop(): void {
         if (this.animationFrameId !== null) {
             cancelAnimationFrame(this.animationFrameId);
             this.animationFrameId = null;
         }
     }
 
-    setPipeline(pipeline: GPURenderPipeline): void {
+    public setPipeline(pipeline: GPURenderPipeline): void {
         this.pipeline = pipeline;
     }
 
-    setBindGroups(bindGroups: GPUBindGroup[]): void {
+    public setBindGroups(bindGroups: GPUBindGroup[]): void {
         this.bindGroups = bindGroups;
     }
 

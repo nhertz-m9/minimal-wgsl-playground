@@ -6,7 +6,7 @@ import { WebGPUContext } from "./webgpu";
 export class PipelineManager {
     constructor(private readonly ctx: WebGPUContext) {}
 
-    async createPipeline(wgslCode: string, bindGroupLayouts: GPUBindGroupLayout[] = []): Promise<GPURenderPipeline> {
+    public async createPipeline(wgslCode: string, bindGroupLayouts: GPUBindGroupLayout[] = []): Promise<GPURenderPipeline> {
         this.ctx.device.pushErrorScope("validation");
 
         const shaderModule = this.ctx.device.createShaderModule({

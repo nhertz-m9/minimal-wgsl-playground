@@ -25,7 +25,7 @@ export class GlobalUniforms {
     public readonly bindGroup: GPUBindGroup;
     
     private readonly buffer: GPUBuffer;
-    private readonly values: Float32Array;
+    private readonly values: Float32Array<ArrayBuffer>;
 
     constructor(private readonly ctx: WebGPUContext) {
         // Size: 4 floats (time, res.x, res.y, padding) = 16 bytes
@@ -65,7 +65,7 @@ export class GlobalUniforms {
         });
     }
 
-    update(time: number, width: number, height: number): void {
+    public update(time: number, width: number, height: number): void {
         this.values[0] = time;
         this.values[1] = 0; // Padding
         this.values[2] = width;
@@ -74,7 +74,7 @@ export class GlobalUniforms {
         this.ctx.device.queue.writeBuffer(
             this.buffer,
             0,
-            this.values as unknown as BufferSource
+            this.values
         );
     }
 }

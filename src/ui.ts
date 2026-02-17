@@ -20,12 +20,12 @@ export class UI {
         document.body.appendChild(this.errorPanel);
     }
 
-    showError(message: string): void {
+    public showError(message: string): void {
         this.errorPanel.textContent = message;
         this.errorPanel.style.display = "block";
     }
 
-    clearError(): void {
+    public clearError(): void {
         this.errorPanel.textContent = "";
         this.errorPanel.style.display = "none";
     }

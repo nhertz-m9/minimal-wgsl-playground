@@ -17,11 +17,11 @@ export class Editor {
         });
     }
 
-    getCode(): string {
+    public getCode(): string {
         return this.instance.getValue();
     }
 
-    onChange(callback: (code: string) => void): void {
+    public onChange(callback: (code: string) => void): void {
         this.instance.onDidChangeModelContent(() => {
             callback(this.instance.getValue());
         });

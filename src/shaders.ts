@@ -1,4 +1,4 @@
-export const INITIAL_SHADER = `
+export const SHADER_PREAMBLE = `
 struct Globals {
     time: f32,
     resolution: vec2<f32>,
@@ -25,6 +25,9 @@ fn vs_main(@builtin(vertex_index) vertexIndex : u32) -> VertexOutput {
   return output;
 }
 
+`;
+
+export const INITIAL_USER_CODE = `
 fn palette(t: f32) -> vec3<f32> {
     let a = vec3<f32>(0.5, 0.5, 0.5);
     let b = vec3<f32>(0.5, 0.5, 0.5);

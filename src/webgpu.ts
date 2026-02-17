@@ -10,7 +10,7 @@ export class WebGPUContext {
         public readonly format: GPUTextureFormat
     ) {}
 
-    static async init(canvas: HTMLCanvasElement): Promise<WebGPUContext> {
+    public static async init(canvas: HTMLCanvasElement): Promise<WebGPUContext> {
         if (!navigator.gpu) {
             throw new Error("WebGPU is not supported in this browser.");
         }
