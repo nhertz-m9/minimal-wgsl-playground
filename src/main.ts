@@ -25,7 +25,6 @@ async function main() {
         const pipelineManager = new PipelineManager(ctx);
 
         // Bind globals to renderer
-        // Bind globals to renderer
         renderer.setBindGroups([globalUniforms.bindGroup]);
 
         // Handle Resize
